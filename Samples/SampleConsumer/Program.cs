@@ -50,33 +50,33 @@ namespace SampleConsumer
                 Console.WriteLine($"MySQL Instances: {MySqlDriver.InstanceCount}");
                 //Console.WriteLine($"Postgres Instances: {PostgresDriver.InstanceCount}");
 
-                // ------------------------------------------------
-                // ASYNC CRUD (No Tx)
-                // ------------------------------------------------
-                //Console.WriteLine("\n--- ASYNC CRUD (No Tx) ---");
-                //try
-                //{
-                //    await DbCrudHelper.InsertAsync(sql, "Users",
-                //        new { Username = "Jay", Email = "jay@gmail.com" });
+                //------------------------------------------------
+                //ASYNC CRUD(No Tx)
+                //------------------------------------------------
+                Console.WriteLine("\n--- ASYNC CRUD (No Tx) ---");
+                try
+                {
+                    //await DbCrudHelper.InsertAsync(sql, "Users",
+                    //    new { Username = "Jay", Email = "jay@gmail.com" });
 
-                //    int newId = await DbCrudHelper.InsertAndGetIdAsync(sql, "Users",
-                //        new { Username = "Ajay", Email = "ajay@gmail.com" });
+                    int newId = await DbCrudHelper.InsertAndGetIdAsync(sql, "Users",
+                        new { Username = "Ajay", Email = "ajay@gmail.com" });
 
-                //    Console.WriteLine($"Inserted ID: {newId}");
+                    Console.WriteLine($"Inserted ID: {newId}");
 
-                //    int up = await DbCrudHelper.UpdateAsync(sql, "Users",
-                //        new { Email = "ajay@new.com" },
-                //        new { Id = newId });
+                    int up = await DbCrudHelper.UpdateAsync(sql, "Users",
+                        new { Email = "ajay@new.com" },
+                        new { Id = newId });
 
-                //    Console.WriteLine($"Updated rows: {up}");
+                    Console.WriteLine($"Updated rows: {up}");
 
-                //    int del = await DbCrudHelper.DeleteAsync(sql, "Users", new { Id = newId });
-                //    Console.WriteLine($"Deleted rows: {del}");
-                //}
-                //catch (DbLibException ex)
-                //{
-                //    Console.WriteLine($"Exception: {ex.Message} - {ex.InnerException} ");
-                //}
+                    int del = await DbCrudHelper.DeleteAsync(sql, "Users", new { Id = newId });
+                    Console.WriteLine($"Deleted rows: {del}");
+                }
+                catch (DbLibException ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message} - {ex.InnerException} ");
+                }
 
                 // ------------------------------------------------
                 // ASYNC TRANSACTION
