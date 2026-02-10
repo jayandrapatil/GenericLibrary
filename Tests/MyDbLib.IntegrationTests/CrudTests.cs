@@ -1,47 +1,59 @@
 using Microsoft.Extensions.DependencyInjection;
-using MyDbLib.Api;                // IDbDriver
-using MyDbLib.Core.Extensions;    // AddMyDbLibCore()
-using MyDbLib.Core.Helpers;       // DbCrudHelper (if inside Helpers)
+using MyDbLib.Api;
+using MyDbLib.Api.Interfaces;
+using MyDbLib.Core.Extensions;
+using MyDbLib.Core.Helpers;
 using MyDbLib.Providers.SqlServer;
+using Xunit;
 
-
-public class CrudTests
+namespace MyDbLib.IntegrationTests
 {
-    private readonly IDbDriver _sql;
-
-    public CrudTests()
+    public class CrudTests
     {
-        var services = new ServiceCollection();
+        private readonly IDbDriver _sql;
 
-        services.AddMyDbLibCore();
+        public CrudTests()
+        {
+            var services = new ServiceCollection();
 
-        services.AddMyDbLibSqlServer(
-            name: "SQLServer",
-            connectionString: "Server=localhost;Database=ProjectDB;User Id=sa;Password=admin;Encrypt=False;"
-        );
+            services.AddMyDbLibCore();
 
-        var provider = services.BuildServiceProvider();
-        var factory = provider.GetRequiredService<IDbDriverFactory>();
+            services.AddMyDbLibSqlServer(
+                name: "SQLServer",
+                connectionString:
+                    "Server=localhost;Database=ProjectDB;User Id=sa;Password=admin;Encrypt=False;"
+            );
 
-        _sql = factory.Get("SQLServer");
-    }
+            var provider = services.BuildServiceProvider();
+            var factory = provider.GetRequiredService<IDbDriverFactory>();
 
-    [Fact]
-    public async Task Insert_Update_Delete_Should_Work()
-    {
-        int id = await DbCrudHelper.InsertAndGetIdAsync(_sql, "Users",
-            new { Username = "TestUser", Email = "test@test.com" });
+            _sql = factory.Get("SQLServer");
+        }
 
-        Assert.True(id > 0);
+        [Fact]
+        public async Task Insert_Update_Delete_Should_Work()
+        {
+            int id = await DbCrudHelper.InsertAndGetIdAsync(
+                _sql,
+                "Users",
+                new { Username = "TestUser", Email = "test@test.com" });
 
-        int up = await DbCrudHelper.UpdateAsync(_sql, "Users",
-            new { Email = "updated@test.com" },
-            new { Id = id });
+            Assert.True(id > 0);
 
-        Assert.Equal(1, up);
+            int updated = await DbCrudHelper.UpdateAsync(
+                _sql,
+                "Users",
+                new { Email = "updated@test.com" },
+                new { Id = id });
 
-        int del = await DbCrudHelper.DeleteAsync(_sql, "Users", new { Id = id });
+            Assert.Equal(1, updated);
 
-        Assert.Equal(1, del);
+            int deleted = await DbCrudHelper.DeleteAsync(
+                _sql,
+                "Users",
+                new { Id = id });
+
+            Assert.Equal(1, deleted);
+        }
     }
 }
