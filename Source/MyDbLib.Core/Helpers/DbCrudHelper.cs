@@ -9,9 +9,23 @@ using System.Threading.Tasks;
 
 namespace MyDbLib.Core.Helpers
 {
+    /// <summary>
+    /// Lightweight CRUD helper built on top of IDbDriver / IDbTransactionScope.
+    ///
+    /// Responsibilities:
+    /// - Builds parameterized SQL
+    /// - Supports execution via Driver OR Transaction
+    /// - Keeps SQL provider-agnostic
+    /// - Avoids ORM dependency
+    ///
+    /// Uses reflection to map POCO/anonymous objects to SQL parameters.
+    /// </summary>
     public static class DbCrudHelper
     {
         #region INSERT
+        // INSERT helpers support:
+        // - Driver execution (auto retry)
+        // - Transaction execution (no retry)
         // ASYNC
         public static async Task InsertAsync(IDbDriver driver, string table, object data)
         {
@@ -64,6 +78,7 @@ namespace MyDbLib.Core.Helpers
         #endregion
 
         #region UPDATE
+        // UPDATE returns number of affected records.
         // ASYNC
         public static async Task<int> UpdateAsync(IDbDriver driver, string table, object data, object where)
         {
@@ -94,6 +109,7 @@ namespace MyDbLib.Core.Helpers
         #endregion
 
         #region DELETE
+        // DELETE returns number of affected records.
         // ASYNC
         public static async Task<int> DeleteAsync(IDbDriver driver, string table, object where)
         {
@@ -124,6 +140,10 @@ namespace MyDbLib.Core.Helpers
         #endregion
 
         #region SQL BUILDERS
+        // SQL builders generate provider-agnostic parameterized statements.
+        /// <summary>
+        /// Builds INSERT SQL from POCO.
+        /// </summary>
         public static (string sql, object parameters) BuildInsert(string table, object data)
         {
             ValidateTable(table);
@@ -135,6 +155,9 @@ namespace MyDbLib.Core.Helpers
             return ($"INSERT INTO {table} ({cols}) VALUES ({vals});", data);
         }
 
+        /// <summary>
+        /// Builds INSERT SQL with identity retrieval placeholder.
+        /// </summary>
         public static (string sql, object parameters) BuildInsertAndGetId(string table, object data)
         {
             ValidateTable(table);
@@ -151,6 +174,9 @@ namespace MyDbLib.Core.Helpers
             return (sql, data);
         }
 
+        /// <summary>
+        /// Builds UPDATE SQL using data + where objects.
+        /// </summary>
         public static (string sql, object parameters) BuildUpdate(string table, object data, object where)
         {
             ValidateTable(table);
@@ -170,6 +196,9 @@ namespace MyDbLib.Core.Helpers
             return (sql, dict);
         }
 
+        /// <summary>
+        /// Builds DELETE SQL using where object.
+        /// </summary>
         public static (string sql, object parameters) BuildDelete(string table, object where)
         {
             ValidateTable(table);
@@ -183,6 +212,10 @@ namespace MyDbLib.Core.Helpers
         #endregion
 
         #region UTIL
+        // Reflection helpers used by SQL builders.
+        /// <summary>
+        /// Extracts readable properties from an object.
+        /// </summary>
         private static PropertyInfo[] GetProps(object obj)
         {
             if (obj == null)
@@ -199,6 +232,9 @@ namespace MyDbLib.Core.Helpers
             return props;
         }
 
+        /// <summary>
+        /// Validates table name is provided.
+        /// </summary>
         private static void ValidateTable(string table)
         {
             if (string.IsNullOrWhiteSpace(table))

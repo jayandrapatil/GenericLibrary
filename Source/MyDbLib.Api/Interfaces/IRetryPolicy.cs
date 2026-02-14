@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MyDbLib.Api.Interfaces
 {
     /// <summary>
-    /// Defines a retry abstraction for transient failures.
-    /// This is DB-agnostic and execution-focused.
+    /// Defines retry behaviour for transient database failures
+    /// such as:
+    /// - Deadlocks
+    /// - Timeouts
+    /// - Network blips
     /// </summary>
     public interface IRetryPolicy
     {
@@ -18,10 +18,13 @@ namespace MyDbLib.Api.Interfaces
         Task ExecuteAsync(Func<Task> action);
 
         /// <summary>
-        /// Executes an async action with retry support and returns a value.
+        /// Executes an async action returning a value with retry support.
         /// </summary>
         Task<T> ExecuteAsync<T>(Func<Task<T>> action);
 
+        /// <summary>
+        /// Executes a synchronous action with retry support.
+        /// </summary>
         T Execute<T>(Func<T> action);
     }
 }

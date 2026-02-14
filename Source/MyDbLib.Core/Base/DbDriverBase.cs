@@ -13,11 +13,38 @@ using System.Threading.Tasks;
 
 namespace MyDbLib.Core.Base
 {
+    /// <summary>
+    /// Base implementation of IDbDriver.
+    ///
+    /// Handles:
+    /// - Connection management
+    /// - Retry execution
+    /// - Exception normalization
+    /// - Parameter binding
+    /// - Mapping
+    /// - Transaction orchestration
+    ///
+    /// Providers only need to implement:
+    ///     CreateConnection()
+    ///     IdentitySelectSql (if different)
+    /// </summary>
     public abstract class DbDriverBase : IDbDriver
     {
+        /// <summary>
+        /// Connection string provided by consumer.
+        /// </summary>
         protected string ConnectionString { get; }
+
+        /// <summary>
+        /// Retry policy used for transient failures.
+        /// </summary>
         protected IRetryPolicy RetryPolicy { get; }
 
+        /// <summary>
+        /// Provider-specific identity retrieval SQL.
+        /// SQL Server default = SCOPE_IDENTITY()
+        /// MySQL override = LAST_INSERT_ID()
+        /// </summary>
         protected virtual string IdentitySelectSql => "SELECT SCOPE_IDENTITY();";
 
         protected DbDriverBase(string connectionString, IRetryPolicy retryPolicy)
@@ -30,6 +57,9 @@ namespace MyDbLib.Core.Base
         }
 
         #region SAFETY
+        /// <summary>
+        /// Executes an async DB operation with retry + exception normalization.
+        /// </summary>
         protected async Task<T> SafeAsync<T>(Func<Task<T>> action)
         {
             try
@@ -42,6 +72,9 @@ namespace MyDbLib.Core.Base
             }
         }
 
+        /// <summary>
+        /// Executes a sync DB operation with retry + exception normalization.
+        /// </summary>
         protected T Safe<T>(Func<T> action)
         {
             try
@@ -53,10 +86,16 @@ namespace MyDbLib.Core.Base
                 throw new DbLibException($"Database operation failed: {ex.Message}", ex);
             }
         }
-
         #endregion
+
+        /// <summary>
+        /// Implemented by provider to create actual DB connection.
+        /// </summary>
         protected abstract DbConnection CreateConnection();
 
+        /// <summary>
+        /// Opens a connection asynchronously.
+        /// </summary>
         protected async Task<DbConnection> OpenAsync()
         {
             var conn = CreateConnection();
@@ -64,6 +103,9 @@ namespace MyDbLib.Core.Base
             return conn;
         }
 
+        /// <summary>
+        /// Opens a connection synchronously.
+        /// </summary>
         protected DbConnection Open()
         {
             var conn = CreateConnection();
@@ -71,6 +113,9 @@ namespace MyDbLib.Core.Base
             return conn;
         }
 
+        /// <summary>
+        /// Creates a command object.
+        /// </summary>
         protected DbCommand CreateCommand(string sql, DbConnection connection)
         {
             if (string.IsNullOrWhiteSpace(sql))
@@ -82,6 +127,12 @@ namespace MyDbLib.Core.Base
             return cmd;
         }
 
+        /// <summary>
+        /// Binds parameters from:
+        /// - Dictionary
+        /// - Anonymous object
+        /// - POCO
+        /// </summary>
         protected virtual void AddParameters(DbCommand command, object parameters)
         {
             if (parameters == null) return;
@@ -110,7 +161,10 @@ namespace MyDbLib.Core.Base
         }
 
         #region TRANSACTIONS
-
+        /// <summary>
+        /// Begins async transaction.
+        /// Retry is NOT applied inside transaction.
+        /// </summary>
         public async Task<IDbTransactionScope> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
         {
             var conn = await OpenAsync();
@@ -118,6 +172,9 @@ namespace MyDbLib.Core.Base
             return new DbTransactionScope(this, conn, tx);
         }
 
+        /// <summary>
+        /// Begins sync transaction.
+        /// </summary>
         public IDbTransactionScope BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
         {
             var conn = Open();
@@ -128,7 +185,9 @@ namespace MyDbLib.Core.Base
         #endregion
 
         #region RAW EXECUTION (SAFE + RETRY)
-
+        /// <summary>
+        /// Executes non-query safely with retry.
+        /// </summary>
         public Task<DbCommandResult> ExecuteAsync(string sql, object parameters = null)
         {
             return SafeRawAsync(async () =>
@@ -138,6 +197,9 @@ namespace MyDbLib.Core.Base
             });
         }
 
+        /// <summary>
+        /// Sync version of ExecuteAsync.
+        /// </summary>
         public DbCommandResult Execute(string sql, object parameters = null)
         {
             return SafeRaw(() =>
@@ -147,6 +209,10 @@ namespace MyDbLib.Core.Base
             });
         }
 
+        /// <summary>
+        /// Executes INSERT and returns identity value.
+        /// Uses provider-specific identity SQL.
+        /// </summary>
         public async Task<int> InsertAndGetIdAsync(string sql, object parameters = null)
         {
             return await SafeAsync(async () =>
@@ -240,7 +306,8 @@ namespace MyDbLib.Core.Base
         #endregion
 
         #region INTERNAL TX (NO RETRY)
-
+        // Internal methods bypass retry.
+        // Retrying inside a transaction can cause duplicate execution.
         internal async Task<int> ExecuteInternalAsync(string sql, object parameters, DbConnection conn, DbTransaction tx)
         {
             try
@@ -393,7 +460,7 @@ namespace MyDbLib.Core.Base
         #endregion
 
         #region RAW SAFE HELPERS
-
+        // Converts execution into DbCommandResult instead of throwing.
         protected DbCommandResult SafeRaw(Func<int> action)
         {
             try
@@ -444,7 +511,7 @@ namespace MyDbLib.Core.Base
 
 
         #region MAPPERS
-
+        // Maps reader rows into Dictionary<string, object>
         private static List<Dictionary<string, object>> MapToDictionaryList(DbDataReader reader)
         {
             var list = new List<Dictionary<string, object>>();
@@ -465,6 +532,7 @@ namespace MyDbLib.Core.Base
             return list;
         }
 
+        // Maps reader rows into strongly typed POCO.
         private static List<T> MapToList<T>(DbDataReader reader) where T : new()
         {
             var list = new List<T>();
@@ -501,6 +569,9 @@ namespace MyDbLib.Core.Base
             return list;
         }
 
+        /// <summary>
+        /// Replaces {IDENTITY} placeholder with provider-specific SQL.
+        /// </summary>
         private string ReplaceIdentity(string sql)
         {
             return sql.Replace("{IDENTITY}", IdentitySelectSql);

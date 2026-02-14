@@ -1,21 +1,33 @@
-﻿using MyDbLib.Api.Exceptions;
-using MyDbLib.Api.Interfaces;
-using MyDbLib.Api.Models;
+﻿using MyDbLib.Api.Interfaces;
 using System;
-using System.Data.Common;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyDbLib.Core.Resilience
 {
     /// <summary>
-    /// Default retry policy implementation.
-    /// Handles transient failures in a DB-agnostic manner.
+    /// Default implementation of <see cref="IRetryPolicy"/>.
+    ///
+    /// Provides resilience against transient database failures such as:
+    /// - Deadlocks
+    /// - Timeouts
+    /// - Connection interruptions
+    ///
+    /// Works in a provider-agnostic manner by analyzing exception types.
+    ///
+    /// Important:
+    /// Retry should NOT be applied inside transactions.
     /// </summary>
     public sealed class RetryPolicy : IRetryPolicy
     {
+        /// <summary>
+        /// Maximum number of retry attempts.
+        /// </summary>
         private readonly int _maxRetries;
+
+        /// <summary>
+        /// Delay between retry attempts.
+        /// </summary>
         private readonly TimeSpan _delay;
 
         public RetryPolicy(int maxRetries, TimeSpan delay)
@@ -27,7 +39,9 @@ namespace MyDbLib.Core.Resilience
             _delay = delay;
         }
 
-        // ASYNC (no return)
+        /// <summary>
+        /// Executes an async operation without return value.
+        /// </summary>
         public async Task ExecuteAsync(Func<Task> action)
         {
             if (action == null)
@@ -40,7 +54,9 @@ namespace MyDbLib.Core.Resilience
             });
         }
 
-        // ASYNC (with return)
+        /// <summary>
+        /// Executes an async operation with retry support.
+        /// </summary>
         public async Task<T> ExecuteAsync<T>(Func<Task<T>> action)
         {
             if (action == null)
@@ -62,7 +78,9 @@ namespace MyDbLib.Core.Resilience
             }
         }
 
-        // SYNC
+        /// <summary>
+        /// Executes a synchronous operation with retry support.
+        /// </summary>
         public T Execute<T>(Func<T> action)
         {
             if (action == null)
@@ -84,6 +102,10 @@ namespace MyDbLib.Core.Resilience
             }
         }
 
+        /// <summary>
+        /// Determines whether an exception represents a transient failure.
+        /// Uses provider-agnostic detection.
+        /// </summary>
         private static bool IsTransient(Exception ex)
         {
             if (ex == null)
@@ -100,5 +122,4 @@ namespace MyDbLib.Core.Resilience
                 || name.IndexOf("Connection", StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
-
 }

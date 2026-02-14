@@ -6,10 +6,21 @@ using System;
 namespace MyDbLib.Providers.MySql
 {
     /// <summary>
-    /// Registers MySQL provider for MyDbLib.
+    /// Registers a MySQL driver with MyDbLib.
+    ///
+    /// Enables usage of MySQL under a logical name.
+    ///
+    /// Example:
+    /// services.AddMyDbLibMySql("Main", connectionString);
     /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds MySQL provider to MyDbLib.
+        /// </summary>
+        /// <param name="services">Service collection.</param>
+        /// <param name="name">Logical database name.</param>
+        /// <param name="connectionString">MySQL connection string.</param>
         public static IServiceCollection AddMyDbLibMySql(
             this IServiceCollection services,
             string name,

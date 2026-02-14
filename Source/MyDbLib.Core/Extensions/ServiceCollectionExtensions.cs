@@ -9,11 +9,23 @@ using System.Collections.Generic;
 namespace MyDbLib.Core.Extensions
 {
     /// <summary>
-    /// Registers core MyDbLib services.
-    /// Must be called ONCE.
+    /// Registers core MyDbLib infrastructure into the DI container.
+    ///
+    /// Includes:
+    /// - Default retry policy
+    /// - Central driver factory
+    ///
+    /// This must be called once during application startup
+    /// before registering database providers.
+    ///
+    /// Example:
+    /// services.AddMyDbLibCore();
     /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds MyDbLib core services.
+        /// </summary>
         public static IServiceCollection AddMyDbLibCore(
             this IServiceCollection services)
         {

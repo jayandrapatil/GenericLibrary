@@ -6,10 +6,21 @@ using System;
 namespace MyDbLib.Providers.SqlServer
 {
     /// <summary>
-    /// Registers SQL Server provider for MyDbLib.
+    /// Registers a SQL Server driver with MyDbLib.
+    ///
+    /// Enables usage of SQL Server under a logical name.
+    ///
+    /// Example:
+    /// services.AddMyDbLibSqlServer("Main", connectionString);
     /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds SQL Server provider to MyDbLib.
+        /// </summary>
+        /// <param name="services">Service collection.</param>
+        /// <param name="name">Logical database name.</param>
+        /// <param name="connectionString">SQL Server connection string.</param>
         public static IServiceCollection AddMyDbLibSqlServer(
             this IServiceCollection services,
             string name,

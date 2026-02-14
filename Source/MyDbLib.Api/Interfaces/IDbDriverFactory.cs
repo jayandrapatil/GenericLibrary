@@ -2,11 +2,16 @@
 {
     /// <summary>
     /// Provides access to named database drivers registered in the system.
+    /// 
+    /// Enables multi-database scenarios such as:
+    /// - Primary DB
+    /// - Reporting DB
+    /// - Audit DB
     /// </summary>
-    public interface   IDbDriverFactory
+    public interface IDbDriverFactory
     {
         /// <summary>
-        /// Returns a database driver registered with the specified name.
+        /// Returns a database driver registered with the specified logical name.
         /// </summary>
         /// <param name="name">
         /// Logical database name (e.g. "Main", "Reporting").
