@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36804.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDbLib.Api.Models", "Source\MyDbLib.Api.Models\MyDbLib.Api.Models.csproj", "{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDbLib.Core", "Source\MyDbLib.Core\MyDbLib.Core.csproj", "{72BEFF55-1913-46E3-BB78-B19CFEE5257F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDbLib.Providers.MySql", "Source\MyDbLib.Providers.MySql\MyDbLib.Providers.MySql.csproj", "{979C70FD-D415-44A2-95E0-137CB1F59370}"
@@ -34,18 +32,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Debug|x64.Build.0 = Debug|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Debug|x86.Build.0 = Debug|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Release|x64.ActiveCfg = Release|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Release|x64.Build.0 = Release|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Release|x86.ActiveCfg = Release|Any CPU
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5}.Release|x86.Build.0 = Release|Any CPU
 		{72BEFF55-1913-46E3-BB78-B19CFEE5257F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{72BEFF55-1913-46E3-BB78-B19CFEE5257F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72BEFF55-1913-46E3-BB78-B19CFEE5257F}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -111,7 +97,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{676B9FE2-FE93-4CDF-A0A1-C2CF5E59C2D5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{72BEFF55-1913-46E3-BB78-B19CFEE5257F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{979C70FD-D415-44A2-95E0-137CB1F59370} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5F618C62-7A8F-4421-989D-CCF310166F93} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}

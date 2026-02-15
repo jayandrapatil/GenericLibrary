@@ -1,13 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFrameworks>net48;net8.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <PackageId>MyDbLib.Api</PackageId>
+    <Version>1.0.0</Version>
+    <Description>Contracts for MyDbLib database abstraction.</Description>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MyDbLib.Api.Models\MyDbLib.Api.Models.csproj" />
-  </ItemGroup>
 
 </Project>

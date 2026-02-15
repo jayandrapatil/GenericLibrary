@@ -46,8 +46,6 @@ namespace SampleConsumer
 
                 //var pg = factory.Get("Postgres");
 
-                Console.WriteLine($"SQLServer Instances: {SqlServerDriver.InstanceCount}");
-                Console.WriteLine($"MySQL Instances: {MySqlDriver.InstanceCount}");
                 //Console.WriteLine($"Postgres Instances: {PostgresDriver.InstanceCount}");
 
                 //------------------------------------------------

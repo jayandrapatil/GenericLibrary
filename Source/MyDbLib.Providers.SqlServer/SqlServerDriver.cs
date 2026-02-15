@@ -2,7 +2,12 @@
 using MyDbLib.Core.Base;
 using System;
 using System.Data.Common;
+#if NET8_0
+using Microsoft.Data.SqlClient;
+#else
 using System.Data.SqlClient;
+#endif
+
 
 namespace MyDbLib.Providers.SqlServer
 {
