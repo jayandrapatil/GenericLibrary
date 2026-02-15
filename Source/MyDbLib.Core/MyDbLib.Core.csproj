@@ -8,12 +8,12 @@
     <NoWarn>1591</NoWarn>
     <PackageId>MyDbLib.Core</PackageId>
     <Version>1.0.0</Version>
-    <Authors>YourName</Authors>
-    <Company>YourCompany</Company>
+    <Authors>Jayandra Waman Patil</Authors>
+    <Company>Tauras</Company>
     <Description>Lightweight provider-agnostic database library.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <RepositoryUrl>https://github.com/YOUR_GITHUB</RepositoryUrl>
-    <PackageTags>database sql retry transactions</PackageTags>
+    <RepositoryUrl>https://github.com/jayandrapatil/GenericLibrary</RepositoryUrl>
+    <PackageTags>database;orm;ado.net;lightweight</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
