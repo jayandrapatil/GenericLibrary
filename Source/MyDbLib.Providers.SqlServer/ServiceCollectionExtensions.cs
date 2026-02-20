@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MyDbLib.Api.Interfaces;
 using MyDbLib.Core.Factories;
+using MyDbLib.Core.Resilience;
 using System;
 
 namespace MyDbLib.Providers.SqlServer
@@ -40,7 +41,9 @@ namespace MyDbLib.Providers.SqlServer
                 name,
                 sp =>
                 {
-                    var retry = sp.GetRequiredService<IRetryPolicy>();
+                    var retry = sp.GetService<IRetryPolicy>()
+                                ?? NoRetryPolicy.Instance;
+                    
                     return new SqlServerDriver(connectionString, retry);
                 }));
 
